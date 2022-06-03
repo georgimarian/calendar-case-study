@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
 
 import { dateFormatter, buildMonthMatrix } from 'utils';
 import { ReactComponent as ArrowLeft } from 'assets/left.svg';
 import { ReactComponent as ArrowRight } from 'assets/right.svg';
 import { WEEK_DAYS } from 'utils/constants';
+
+dayjs.extend(isBetween);
 
 const CalendarHeader = ({ month, setMonth }) => {
   const currentMonthAsString = dateFormatter(month, 'de-DE', {
@@ -54,8 +57,12 @@ const Calendar = ({
     vacationDays?.find(
       (vacation) =>
         day !== 0 &&
-        day - new Date(vacation.startDate).getDate() >= 0 &&
-        new Date(vacation.endDate).getDate() - day >= 0
+        dayjs(new Date(2021, month.month(), day)).isBetween(
+          vacation.startDate,
+          vacation.endDate,
+          null,
+          '[]'
+        )
     );
 
   const isWeekend = (day) => {
@@ -83,7 +90,7 @@ const Calendar = ({
                   'bg-violet-300':
                     !isWeekend(day) && isVacationDay(day, currentVacationDays),
                   'bg-violet-500': isHoliday(day, currentHolidays),
-                  'rounded-3xl text-white font-bold':
+                  'rounded-full text-white font-bold':
                     isHoliday(day, currentHolidays) ||
                     (!isWeekend(day) &&
                       isVacationDay(day, currentVacationDays)),
