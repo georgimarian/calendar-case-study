@@ -6,6 +6,8 @@ const LABELS = {
   vacationsAndHolidays: 'Scheduled Vacations & National Holidays',
   totalVacationBudget: ' / 30 days',
   remove: 'Remove',
+  loading: '...Loading...',
+  defaultSelect: '-- select an option --',
 };
 
 const WEEK_DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];

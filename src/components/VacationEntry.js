@@ -1,5 +1,6 @@
-import classNames from 'classnames';
 import { useEffect, useState } from 'react';
+import classNames from 'classnames';
+
 import { dateFormatter } from 'utils';
 import { LABELS } from 'utils/constants';
 import { getWorkingDaysBetweenDates } from 'utils/api';
@@ -8,11 +9,28 @@ const VacationEntry = ({
   startDate,
   endDate,
   name,
-  displayTime,
   type,
+  currentUser,
+  setCurrentUser,
   isRemovable = false,
 }) => {
   const [vacationDays, setVacationDays] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const removeVacation = async () => {
+    const workingDays = await getWorkingDaysBetweenDates(startDate, endDate);
+    const vacationIndex = currentUser.vacations.findIndex(
+      (vacation) => vacation.startDate === startDate
+    );
+    setCurrentUser((prevUser) => {
+      prevUser.vacations.splice(vacationIndex, 1);
+      return {
+        ...prevUser,
+        vacationBudget: prevUser.vacationBudget + workingDays,
+        vacations: prevUser.vacations,
+      };
+    });
+  };
 
   const baseClasses = classNames(
     {
@@ -24,7 +42,11 @@ const VacationEntry = ({
 
   useEffect(() => {
     if (endDate) {
-      getWorkingDaysBetweenDates(startDate, endDate).then(setVacationDays);
+      setLoading(true);
+      getWorkingDaysBetweenDates(startDate, endDate).then((data) => {
+        setVacationDays(data);
+        setLoading(false);
+      });
     }
   }, [startDate, endDate, setVacationDays]);
 
@@ -45,7 +67,9 @@ const VacationEntry = ({
       </div>
       <div className={classNames(baseClasses, 'flex-1 items-start')}>
         <p className='font-bold text-xl'>
-          {name || `Vacation (${vacationDays}) days`}
+          {loading
+            ? `${LABELS.loading}`
+            : name || `Vacation (${vacationDays}) days`}
         </p>
         <p className='font-thin	'>
           {!endDate
@@ -57,7 +81,7 @@ const VacationEntry = ({
       {isRemovable && (
         <button
           className={classNames(baseClasses, 'items-center')}
-          onClick={() => alert('anularea')}
+          onClick={removeVacation}
         >
           {LABELS.remove}
         </button>

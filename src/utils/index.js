@@ -42,4 +42,11 @@ const buildMonthMatrix = (month) => {
   return monthRows;
 };
 
-export { dateFormatter, buildMonthMatrix };
+const getUserVacationDaysInMonth = (user, month) =>
+  user?.vacations?.filter(
+    (vacation) =>
+      dayjs(vacation.startDate).month() === month ||
+      dayjs(vacation.endDate).month() === month
+  );
+
+export { dateFormatter, buildMonthMatrix, getUserVacationDaysInMonth };
