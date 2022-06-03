@@ -5,7 +5,6 @@ import VacationEntry from './VacationEntry';
 const VacationDisplay = ({ legalPublicHolidays, currentVacationDays }) => {
   return (
     <div className='py-4'>
-      <h3 className='font-bold text-2xl'>{LABELS.vacationsAndHolidays}</h3>
       {legalPublicHolidays.map((holiday) => (
         <VacationEntry
           startDate={holiday.date}

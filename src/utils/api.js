@@ -13,7 +13,7 @@ const getNationalHolidays = (currentDate) =>
     body: JSON.stringify({
       country: 'DE',
       year: '2021',
-      month: currentDate.getMonth() + 1,
+      month: currentDate.month() + 1,
     }),
   }).then((response) => response.json());
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
+import dayjs from 'dayjs';
 
 import { ReactComponent as Arrow } from 'assets/arrow.svg';
 import { MOCK_USERS as users } from 'mock-data/users';
@@ -11,17 +12,19 @@ import { LABELS } from 'utils/constants';
 import { getNationalHolidays, getWorkingDaysBetweenDates } from 'utils/api';
 
 const VacationPlanner = () => {
-  const URL = 'http://127.0.0.1:3000/holidays';
-
   const [currentUser, setCurrentUser] = useState(null);
-  const [apiResponse, setApiResponse] = useState([]);
-  const [currentDate, setCurrentDate] = useState(new Date());
-
+  const [publicHolidays, setPublicHolidays] = useState([]);
+  const [currentDate, setCurrentDate] = useState(dayjs().subtract(1, 'year'));
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    getNationalHolidays(currentDate).then(setApiResponse);
+    setIsLoading(true);
+    getNationalHolidays(currentDate).then((data) => {
+      setPublicHolidays(data);
+      setIsLoading(false);
+    });
   }, [currentDate]);
 
   const handleUserChange = (event) =>
@@ -33,10 +36,10 @@ const VacationPlanner = () => {
   const getUserVacationDaysInMonth = () =>
     currentUser?.vacations?.filter(
       (vacation) =>
-        new Date(vacation.startDate).getMonth() === currentDate.getMonth() ||
-        new Date(vacation.endDate).getMonth() === currentDate.getMonth()
+        dayjs(vacation.startDate).month() === currentDate.month() ||
+        dayjs(vacation.endDate).month() === currentDate.month()
     );
-  const legalPublicHolidays = filterPublicHolidays(apiResponse);
+  const legalPublicHolidays = filterPublicHolidays(publicHolidays);
 
   const buttonBaseClass = classNames({
     'bg-slate-200': !startDate || !endDate,
@@ -119,10 +122,15 @@ const VacationPlanner = () => {
           currentVacationDays={getUserVacationDaysInMonth()}
         />
       </div>
-      <VacationDisplay
-        legalPublicHolidays={legalPublicHolidays}
-        currentVacationDays={getUserVacationDaysInMonth()}
-      />
+      <h3 className='font-bold text-2xl'>{LABELS.vacationsAndHolidays}</h3>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <VacationDisplay
+          legalPublicHolidays={legalPublicHolidays}
+          currentVacationDays={getUserVacationDaysInMonth()}
+        />
+      )}
     </div>
   );
 };

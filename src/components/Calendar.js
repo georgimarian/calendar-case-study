@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
+import dayjs from 'dayjs';
 
 import { dateFormatter, buildMonthMatrix } from 'utils';
 import { ReactComponent as ArrowLeft } from 'assets/left.svg';
@@ -19,10 +20,7 @@ const CalendarHeader = ({ month, setMonth }) => {
         <button
           className='p-1'
           onClick={() =>
-            setMonth(
-              (prevMonth) =>
-                new Date(prevMonth.getFullYear(), prevMonth.getMonth() - 1)
-            )
+            setMonth((prevMonth) => dayjs(prevMonth).subtract(1, 'month'))
           }
         >
           <ArrowLeft />
@@ -30,10 +28,7 @@ const CalendarHeader = ({ month, setMonth }) => {
         <button
           className='p-1'
           onClick={() =>
-            setMonth(
-              (prevMonth) =>
-                new Date(prevMonth.getFullYear(), prevMonth.getMonth() + 1)
-            )
+            setMonth((prevMonth) => dayjs(prevMonth).add(1, 'month'))
           }
         >
           <ArrowRight />
@@ -52,7 +47,7 @@ const Calendar = ({
   const [monthMatrix, setMonthMatrix] = useState([]);
 
   useEffect(() => {
-    setMonthMatrix(buildMonthMatrix(month.getMonth()));
+    setMonthMatrix(buildMonthMatrix(month.month()));
   }, [month]);
 
   const isVacationDay = (day, vacationDays) =>
@@ -64,13 +59,12 @@ const Calendar = ({
     );
 
   const isWeekend = (day) => {
-    const date = new Date(2021, month.getMonth(), day).getDay();
-    // TODO - investigate indices
-    return date === 5 || date === 6;
+    const date = dayjs(new Date(2021, month.month(), day)).day();
+    return date === 0 || date === 6;
   };
 
   const isHoliday = (day, holidays) =>
-    holidays.find((holiday) => new Date(holiday.date).getDate() === day);
+    holidays.find((holiday) => dayjs(holiday.date).date() === day);
 
   return (
     <div className='w-full rounded-xl bg-slate-100 p-2'>
