@@ -11,8 +11,16 @@ import VacationDisplay from './VacationDisplay';
 import VacationPicker from './VacationPicker';
 
 const VacationPlanner = () => {
-  const [users, setUsers] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [users, setUsers] = useState(
+    localStorage.getItem('users')
+      ? JSON.parse(localStorage.getItem('users'))
+      : MOCK_USERS
+  );
+  const [currentUser, setCurrentUser] = useState(
+    localStorage.getItem('currentUser')
+      ? JSON.parse(localStorage.getItem('currentUser'))
+      : null
+  );
   const [publicHolidays, setPublicHolidays] = useState([]);
   const [currentDate, setCurrentDate] = useState(dayjs().subtract(1, 'year'));
   const [loading, setLoading] = useState(false);
@@ -43,19 +51,6 @@ const VacationPlanner = () => {
   }, [currentUser, setUsers]);
 
   useEffect(() => {
-    setCurrentUser(
-      localStorage.getItem('currentUser')
-        ? JSON.parse(localStorage.getItem('currentUser'))
-        : null
-    );
-    if (localStorage.getItem('users'))
-      setUsers(JSON.parse(localStorage.getItem('users')));
-    else {
-      setUsers(MOCK_USERS);
-    }
-  }, [setCurrentUser, setUsers]);
-
-  useEffect(() => {
     setLoading(true);
     getNationalHolidays(currentDate).then((data) => {
       setPublicHolidays(data);
@@ -75,8 +70,7 @@ const VacationPlanner = () => {
     <div className='w-4/5 p-4 rounded-xl flex flex-col justify-center bg-white'>
       <select
         className='w-full h-11 bg-slate-100 rounded-xl p-px my-1'
-        defaultValue={'initial'}
-        value={currentUser}
+        value={currentUser ? JSON.stringify(currentUser) : 'initial'}
         onChange={handleUserChange}
       >
         <option disabled hidden value='initial'>
