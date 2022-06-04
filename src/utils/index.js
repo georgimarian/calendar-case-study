@@ -1,13 +1,18 @@
 import dayjs from 'dayjs';
+import objectSupport from 'dayjs/plugin/objectSupport';
+
+dayjs.extend(objectSupport);
 
 const dateFormatter = (date, country, options = {}) =>
   new Intl.DateTimeFormat(country, options).format(new Date(date));
 
-const getStartOfMonth = (month) => dayjs(new Date(2021, month, 1)).day();
+const getStartOfMonth = (month) =>
+  dayjs({ year: 2021, month: month }).startOf('month').day();
 const getEndOfMonth = (month) =>
-  dayjs(new Date(2021, month + 1, 1).getTime() - 1).day();
+  dayjs({ year: 2021, month: month }).endOf('month').day();
 
-const getDaysInMonth = (month) => dayjs(new Date(2022, month, 1)).daysInMonth();
+const getDaysInMonth = (month) =>
+  dayjs({ year: 2021, month: month }).daysInMonth();
 
 const getNumberOfWeeks = (month) => {
   const startDate = getStartOfMonth(month);
