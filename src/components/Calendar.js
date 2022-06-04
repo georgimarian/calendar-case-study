@@ -6,7 +6,7 @@ import isBetween from 'dayjs/plugin/isBetween';
 import { dateFormatter, buildMonthMatrix } from 'utils';
 import { ReactComponent as ArrowLeft } from 'assets/left.svg';
 import { ReactComponent as ArrowRight } from 'assets/right.svg';
-import { WEEK_DAYS } from 'utils/constants';
+import { LABELS, WEEK_DAYS } from 'utils/constants';
 
 dayjs.extend(isBetween);
 
@@ -22,6 +22,7 @@ const CalendarHeader = ({ month, setMonth }) => {
       <div>
         <button
           className='p-1'
+          disabled={dayjs(month).month() === 0}
           onClick={() =>
             setMonth((prevMonth) => dayjs(prevMonth).subtract(1, 'month'))
           }
@@ -30,6 +31,7 @@ const CalendarHeader = ({ month, setMonth }) => {
         </button>
         <button
           className='p-1'
+          disabled={dayjs(month).month() === 11}
           onClick={() =>
             setMonth((prevMonth) => dayjs(prevMonth).add(1, 'month'))
           }
@@ -46,6 +48,7 @@ const Calendar = ({
   setMonth,
   currentHolidays,
   currentVacationDays,
+  loading,
 }) => {
   const [monthMatrix, setMonthMatrix] = useState([]);
 
@@ -74,7 +77,12 @@ const Calendar = ({
     holidays.find((holiday) => dayjs(holiday.date).date() === day);
 
   return (
-    <div className='w-full rounded-xl bg-slate-100 p-2'>
+    <div className='relative w-full rounded-xl bg-slate-100 p-2'>
+      {loading && (
+        <div className='absolute w-full h-full bg-slate-100 opacity-40	font-bold flex flex-col justify-center items-center'>
+          {LABELS.loading}
+        </div>
+      )}
       <CalendarHeader month={month} setMonth={setMonth} />
       <div className='py-4'>
         <div className='flex justify-between'>
@@ -87,9 +95,9 @@ const Calendar = ({
             {row.map((day) => {
               const dateClasses = classNames(
                 {
-                  'bg-violet-300':
+                  'bg-violet-500':
                     !isWeekend(day) && isVacationDay(day, currentVacationDays),
-                  'bg-violet-500': isHoliday(day, currentHolidays),
+                  'bg-violet-300': isHoliday(day, currentHolidays),
                   'rounded-full text-white font-bold':
                     isHoliday(day, currentHolidays) ||
                     (!isWeekend(day) &&

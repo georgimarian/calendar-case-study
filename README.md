@@ -20,7 +20,17 @@ The system should allow the user to block vacation days for any user on any work
 
 ## Assumptions/Decisions
 
+### Additional libraries
+
+- For date manipulation, I used [dayjs](https://day.js.org/).
+- For CSS class concatenation, I used [classnames](https://github.com/JedWatson/classnames#readme).
+- for Proxy server (see below), I used express (additionally cors and dotenv)
+
+### Holiday API Issues
+
 - HolidayAPI yields a CORS error when called via fetch.
-- HolidayAPI provides a node.js way of doing things, which is incompatible with react/front-end use
+- HolidayAPI provides a node.js way of doing things (installing it as a npm package), which is incompatible with react/front-end use
 - I created a node.js express server (in file `server.js`) to proxy the requests to the HolidayAPI
-- even so, I can't access 2022 data since I get `Error: Free accounts are limited to last year's historical data only. Upgrade to premium for access to all holiday data. For more information, please visit https://holidayapi.com/docs`, so we will work with dates in 2021
+- even so, I can't access 2022 data since it's a paid feature of HolidayAPI. I get `Error: Free accounts are limited to last year's historical data only. Upgrade to premium for access to all holiday data. For more information, please visit https://holidayapi.com/docs`, so I made the decision to work with dates in 2021.
+  - the date inputs are restricted to picking dates between Jan 1 and Dec 31 of 2021.
+  - the calendar months of 2021 are displayed

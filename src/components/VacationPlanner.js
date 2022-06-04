@@ -76,12 +76,12 @@ const VacationPlanner = () => {
       <select
         className='w-full h-11 bg-slate-100 rounded-xl p-px my-1'
         defaultValue={'initial'}
+        value={currentUser}
         onChange={handleUserChange}
       >
         <option disabled hidden value='initial'>
           {LABELS.defaultSelect}
         </option>
-
         {users.map((user) => (
           <option className='p-px' key={user.name} value={JSON.stringify(user)}>
             {user.name}
@@ -104,19 +104,16 @@ const VacationPlanner = () => {
 
       <h3 className='font-bold text-2xl'>{LABELS.calendar}</h3>
       <div className='py-4'>
-        {loading ? (
-          <p>{LABELS.loading}</p>
-        ) : (
-          <Calendar
-            month={currentDate}
-            setMonth={setCurrentDate}
-            currentHolidays={legalPublicHolidays}
-            currentVacationDays={getUserVacationDaysInMonth(
-              currentUser,
-              currentDate.month()
-            )}
-          />
-        )}
+        <Calendar
+          month={currentDate}
+          setMonth={setCurrentDate}
+          currentHolidays={legalPublicHolidays}
+          currentVacationDays={getUserVacationDaysInMonth(
+            currentUser,
+            currentDate.month()
+          )}
+          loading={loading}
+        />
       </div>
       <h3 className='font-bold text-2xl'>{LABELS.vacationsAndHolidays}</h3>
       {loading ? (

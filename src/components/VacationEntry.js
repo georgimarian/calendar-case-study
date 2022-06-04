@@ -34,8 +34,8 @@ const VacationEntry = ({
 
   const baseClasses = classNames(
     {
-      'bg-violet-500': type === 'legal',
-      'bg-violet-400': type === 'personal',
+      'bg-violet-500': type === 'personal',
+      'bg-violet-400': type === 'legal',
     },
     'flex flex-col my-1 p-2 m-2 rounded-xl text-white'
   );
