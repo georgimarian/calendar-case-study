@@ -1,12 +1,76 @@
 import { useState } from 'react';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
 
 import { LABELS } from 'utils/constants';
 import { ReactComponent as Arrow } from 'assets/arrow.svg';
 import { getWorkingDaysBetweenDates } from 'utils/api';
 
-import isBetween from 'dayjs/plugin/isBetween';
+dayjs.extend(isBetween);
+
+const computeVacationFrequencyArray = (
+  startDate,
+  endDate,
+  vacationsOfColleagues
+) => {
+  const vacationsPerDayArray = new Array(dayjs(endDate).date()).fill(0);
+
+  vacationsOfColleagues.forEach((vacation) => {
+    const start = dayjs(startDate).isAfter(vacation.startDate)
+      ? dayjs(startDate).date()
+      : dayjs(vacation.startDate).date();
+    const end = dayjs(endDate).isAfter(vacation.endDate)
+      ? dayjs(vacation.endDate).date()
+      : dayjs(endDate).date();
+
+    for (let i = start; i < end; i++) {
+      vacationsPerDayArray[i] = vacationsPerDayArray[i] + 1;
+    }
+  });
+
+  console.log(vacationsPerDayArray);
+
+  return vacationsPerDayArray.slice(dayjs(startDate).date());
+};
+
+export const checkAvailableColleagues = (
+  startDate,
+  endDate,
+  colleaguesOfSameDiscipline
+) => {
+  const vacationsOfColleagues = colleaguesOfSameDiscipline
+    .map((colleague) =>
+      (colleague.vacations || []).filter(
+        (vacation) =>
+          dayjs(vacation.startDate).isBetween(startDate, endDate, null, '[]') ||
+          dayjs(vacation.endDate).isBetween(startDate, endDate, null, '[]') ||
+          dayjs(startDate).isBetween(
+            vacation.startDate,
+            vacation.endDate,
+            null,
+            '[]'
+          ) ||
+          dayjs(endDate).isBetween(
+            vacation.startDate,
+            vacation.endDate,
+            null,
+            '[]'
+          )
+      )
+    )
+    .flat();
+
+  const vacationsPerDayArray = computeVacationFrequencyArray(
+    startDate,
+    endDate,
+    vacationsOfColleagues
+  );
+
+  return !vacationsPerDayArray.some(
+    (element) => element + 1 === colleaguesOfSameDiscipline.length
+  );
+};
 
 const VacationPicker = ({ users, currentUser, setCurrentUser }) => {
   const [startDate, setStartDate] = useState('');
@@ -24,35 +88,13 @@ const VacationPicker = ({ users, currentUser, setCurrentUser }) => {
         user.name !== currentUser.name
     );
 
-    const isFree = (colleague) => {
-      const vacations = (colleague.vacations || []).filter((vacation) => {
-        dayjs.extend(isBetween);
-
-        return (
-          dayjs(vacation.startDate).isBetween(
-            dayjs(startDate),
-            dayjs(endDate)
-          ) ||
-          dayjs(vacation.endDate).isBetween(dayjs(startDate), dayjs(endDate)) ||
-          dayjs(startDate).isBetween(
-            dayjs(vacation.startDate),
-            dayjs(vacation.endDate)
-          ) ||
-          dayjs(endDate).isBetween(
-            dayjs(vacation.startDate),
-            dayjs(vacation.endDate)
-          )
-        );
-      });
-
-      return vacations.length === 0;
-    };
-
-    const freeColleagues = colleaguesOfSameDiscipline.some((colleague) =>
-      isFree(colleague)
+    const periodAvailable = checkAvailableColleagues(
+      startDate,
+      endDate,
+      colleaguesOfSameDiscipline
     );
 
-    if (freeColleagues && removedDays <= currentUser.vacationBudget) {
+    if (periodAvailable && removedDays <= currentUser.vacationBudget) {
       setCurrentUser((prevUser) => ({
         ...prevUser,
         vacationBudget: prevUser.vacationBudget - removedDays,
@@ -63,12 +105,13 @@ const VacationPicker = ({ users, currentUser, setCurrentUser }) => {
 
       setStartDate('');
       setEndDate('');
-    } else if (!freeColleagues) {
+    } else if (!periodAvailable) {
       alert('No free Colleagues');
     } else {
       alert("You don't have enough days");
     }
   };
+
   return (
     <>
       <h3 className='font-bold text-2xl py-3'>{LABELS.bookVacation}</h3>
