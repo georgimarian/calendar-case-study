@@ -1,4 +1,4 @@
-const users = [
+const USERS = [
   {
     name: 'Georgi',
     vacationBudget: 18,
@@ -36,4 +36,4 @@ const currentUser = {
   vacations: [],
 };
 
-export { users, currentUser };
+export { USERS, currentUser };

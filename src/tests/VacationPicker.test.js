@@ -1,12 +1,12 @@
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 
-import { users, currentUser } from 'mock-data/testing-data/users';
+import { USERS, currentUser } from 'mock-data/testing-data/users';
 import { checkAvailableColleagues } from 'components/VacationPicker';
 
 dayjs.extend(isBetween);
 
-const colleaguesOfSameDiscipline = users.filter(
+const colleaguesOfSameDiscipline = USERS.filter(
   (user) =>
     user.discipline === currentUser.discipline && user.name !== currentUser.name
 );

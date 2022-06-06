@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
 
-import { dateFormatter, buildMonthMatrix } from 'utils';
+import {
+  dateFormatter,
+  buildMonthMatrix,
+  isHoliday,
+  isWeekend,
+  isVacationDay,
+} from 'utils';
+
 import { ReactComponent as ArrowLeft } from 'assets/left.svg';
 import { ReactComponent as ArrowRight } from 'assets/right.svg';
 import { LABELS, WEEK_DAYS } from 'utils/constants';
-
-dayjs.extend(isBetween);
 
 const CalendarHeader = ({ month, setMonth }) => {
   const currentMonthAsString = dateFormatter(month, 'de-DE', {
@@ -56,26 +60,6 @@ const Calendar = ({
     setMonthMatrix(buildMonthMatrix(month.month()));
   }, [month]);
 
-  const isVacationDay = (day, vacationDays) =>
-    vacationDays?.find(
-      (vacation) =>
-        day !== 0 &&
-        dayjs(new Date(2021, month.month(), day)).isBetween(
-          vacation.startDate,
-          vacation.endDate,
-          null,
-          '[]'
-        )
-    );
-
-  const isWeekend = (day) => {
-    const date = dayjs(new Date(2021, month.month(), day)).day();
-    return date === 0 || date === 6;
-  };
-
-  const isHoliday = (day, holidays) =>
-    holidays.find((holiday) => dayjs(holiday.date).date() === day);
-
   return (
     <div className='relative w-full rounded-xl bg-slate-100 p-2'>
       {loading && (
@@ -96,12 +80,14 @@ const Calendar = ({
               const dateClasses = classNames(
                 {
                   'bg-violet-500':
-                    !isWeekend(day) && isVacationDay(day, currentVacationDays),
+                    day !== '' &&
+                    !isWeekend(day, month) &&
+                    isVacationDay(day, month, currentVacationDays),
                   'bg-violet-300': isHoliday(day, currentHolidays),
                   'rounded-full text-white font-bold':
                     isHoliday(day, currentHolidays) ||
-                    (!isWeekend(day) &&
-                      isVacationDay(day, currentVacationDays)),
+                    (!isWeekend(day, month) &&
+                      isVacationDay(day, month, currentVacationDays)),
                 },
                 'w-fit p-2'
               );
