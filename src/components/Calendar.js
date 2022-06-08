@@ -60,7 +60,7 @@ const Calendar = ({
 }) => {
   const monthMatrix = useMemo(
     () => buildMonthMatrix(currentStartOfMonth.month()),
-    []
+    [currentStartOfMonth]
   );
 
   return (

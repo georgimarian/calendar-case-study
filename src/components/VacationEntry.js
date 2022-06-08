@@ -47,7 +47,7 @@ const VacationEntry = ({
         setLoading(false);
       });
     }
-  }, [startDate, endDate, setVacationDays]);
+  }, [startDate, endDate, type, setVacationDays]);
 
   return (
     <div className='flex w-full' key={name}>

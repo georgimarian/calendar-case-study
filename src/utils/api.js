@@ -7,21 +7,21 @@ const HEADERS = {
 };
 
 const getNationalHolidays = (currentDate) =>
-  fetch(`${URL}/holidays`, {
-    method: 'POST',
-    headers: HEADERS,
-    body: JSON.stringify({
+  fetch(
+    `${URL}/holidays?${new URLSearchParams({
       country: 'DE',
       year: '2021',
       month: currentDate.month() + 1,
-    }),
-  }).then((response) => response.json());
+    })}`,
+    {
+      method: 'GET',
+      headers: HEADERS,
+    }
+  ).then((response) => response.json());
 
 const getWorkingDaysBetweenDates = (startDate, endDate) =>
-  fetch(`${URL}/workdays`, {
-    method: 'POST',
-    headers: HEADERS,
-    body: JSON.stringify({
+  fetch(
+    `${URL}/workdays?${new URLSearchParams({
       country: 'DE',
       start: dateFormatter(startDate, 'fr-CA', {
         year: 'numeric',
@@ -33,7 +33,11 @@ const getWorkingDaysBetweenDates = (startDate, endDate) =>
         month: '2-digit',
         day: '2-digit',
       }),
-    }),
-  }).then((response) => response.json());
+    })}`,
+    {
+      method: 'GET',
+      headers: HEADERS,
+    }
+  ).then((response) => response.json());
 
 export { getNationalHolidays, getWorkingDaysBetweenDates };

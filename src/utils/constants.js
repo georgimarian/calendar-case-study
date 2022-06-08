@@ -16,6 +16,6 @@ const LABELS = {
 };
 
 const WEEK_DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-const URL = 'http://127.0.0.1:3000';
+const URL = process.env.REACT_APP_SERVER_URL || 'http://127.0.0.1:3001';
 
 export { LABELS, WEEK_DAYS, URL };
