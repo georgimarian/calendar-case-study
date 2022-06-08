@@ -28,9 +28,29 @@ The system should allow the user to block vacation days for any user on any work
 
 ### Holiday API Issues
 
-- HolidayAPI yields a CORS error when called via fetch.
+- HolidayAPI yields a CORS error when called from the browser.
 - HolidayAPI provides a node.js way of doing things (installing it as a npm package), which is incompatible with react/front-end use
-- I created a node.js express server (in file `server.js`) to proxy the requests to the HolidayAPI
+- I created a node.js express server (found [here](https://github.com/georgimarian/calendar-proxy) in file `index.js`) to proxy the requests to the HolidayAPI
 - even so, I can't access 2022 data since it's a paid feature of HolidayAPI. I get `Error: Free accounts are limited to last year's historical data only. Upgrade to premium for access to all holiday data. For more information, please visit https://holidayapi.com/docs`, so I made the decision to work with dates in 2021.
   - the date inputs are restricted to picking dates between Jan 1 and Dec 31 of 2021.
   - the calendar months of 2021 are displayed
+
+### Starting the application
+
+The following commands need to be run in the project root:
+
+```
+npm install
+npm start
+```
+
+The following commands need to be run in the project root of the proxy:
+
+```
+npm install
+npm start
+```
+
+### Deployment
+
+The application is deployed via heroku at https://calendar-case-study.herokuapp.com/
