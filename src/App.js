@@ -1,11 +1,11 @@
 import VacationPlanner from 'components/VacationPlanner';
 
-function App() {
+const App = () => {
   return (
-    <div className='flex items-center justify-center w-screen h-screen bg-violet-400	'>
+    <div className='w-screen min-h-screen h-fit p-40 bg-violet-400'>
       <VacationPlanner />
     </div>
   );
-}
+};
 
 export default App;
