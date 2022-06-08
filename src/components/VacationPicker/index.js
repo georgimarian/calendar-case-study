@@ -19,8 +19,10 @@ const VacationPicker = ({ users, currentUser, setCurrentUser }) => {
 
   const [startDate, setStartDate] = useState(TODAY);
   const [endDate, setEndDate] = useState(TODAY);
+  const [loading, setLoading] = useState(false);
 
   const addVacation = async () => {
+    setLoading(true);
     const removedDays = await getWorkingDaysBetweenDates(startDate, endDate);
     const colleaguesOfSameDiscipline = users.filter(
       (user) =>
@@ -55,6 +57,7 @@ const VacationPicker = ({ users, currentUser, setCurrentUser }) => {
         vacations: [...(prevUser.vacations || []), { startDate, endDate }],
       }));
     }
+    setLoading(false);
   };
 
   return (
@@ -89,9 +92,11 @@ const VacationPicker = ({ users, currentUser, setCurrentUser }) => {
       </div>
       <button
         className={
-          'self-end bg-violet-300 disabled:bg-slate-200 rounded-xl p-4 self-end'
+          'self-end bg-violet-300 disabled:bg-slate-200 rounded-xl p-4 self-end text-white font-bold'
         }
-        disabled={!currentUser || !dayjs(startDate).isSameOrBefore(endDate)}
+        disabled={
+          loading || !currentUser || !dayjs(startDate).isSameOrBefore(endDate)
+        }
         onClick={addVacation}
       >
         {LABELS.add}

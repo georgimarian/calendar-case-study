@@ -15,8 +15,10 @@ const VacationEntry = ({
 }) => {
   const [vacationDays, setVacationDays] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const removeVacation = async () => {
+    setIsRemoving(true);
     const workingDays = await getWorkingDaysBetweenDates(startDate, endDate);
     const vacationIndex = currentUser.vacations.findIndex(
       (vacation) => vacation.startDate === startDate
@@ -29,6 +31,7 @@ const VacationEntry = ({
         vacations: prevUser.vacations,
       };
     });
+    setIsRemoving(false);
   };
 
   const baseClasses = classNames(
@@ -70,7 +73,7 @@ const VacationEntry = ({
             <p className='font-bold text-xl'>
               {name || `Vacation (${vacationDays}) days`}
             </p>
-            <p className='font-thin	'>
+            <p className='font-thin'>
               {vacationDays <= 1
                 ? dateFormatter(startDate, 'default')
                 : `${dateFormatter(startDate, 'default')} -
@@ -81,8 +84,12 @@ const VacationEntry = ({
       </div>
       {type === 'personal' && (
         <button
-          className={classNames(baseClasses, 'items-center')}
+          className={classNames(
+            baseClasses,
+            'items-center disabled:bg-slate-200'
+          )}
           onClick={removeVacation}
+          disabled={isRemoving}
         >
           {LABELS.remove}
         </button>
