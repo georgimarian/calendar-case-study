@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 
 import { USERS, currentUser } from 'mock-data/testing-data/users';
-import { checkAvailableColleagues } from 'components/VacationPicker';
+import { checkConflict } from 'components/VacationPicker/utils';
 
 dayjs.extend(isBetween);
 
@@ -13,22 +13,22 @@ const colleaguesOfSameDiscipline = USERS.filter(
 
 test('Should not be able to schedule', () => {
   const startDate = '2021-06-14';
-  const endDate = '2021-06-30';
-  const periodAvailable = checkAvailableColleagues(
-    startDate,
-    endDate,
-    colleaguesOfSameDiscipline
-  );
-  expect(periodAvailable).toEqual(false);
-});
-
-test('Should be able to schedule', () => {
-  const startDate = '2021-06-28';
-  const endDate = '2021-06-30';
-  const periodAvailable = checkAvailableColleagues(
+  const endDate = '2021-06-16';
+  const periodAvailable = checkConflict(
     startDate,
     endDate,
     colleaguesOfSameDiscipline
   );
   expect(periodAvailable).toEqual(true);
+});
+
+test('Should be able to schedule', () => {
+  const startDate = '2021-06-21';
+  const endDate = '2021-06-23';
+  const periodAvailable = checkConflict(
+    startDate,
+    endDate,
+    colleaguesOfSameDiscipline
+  );
+  expect(periodAvailable).toEqual(false);
 });
