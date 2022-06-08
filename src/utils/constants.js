@@ -7,7 +7,12 @@ const LABELS = {
   totalVacationBudget: ' / 30 days',
   remove: 'Remove',
   loading: '...Loading...',
-  defaultSelect: '-- select an option --',
+  defaultSelect: '-- Select an option --',
+  add: 'Add',
+  chosenDaysAreHolidays: 'The days you chose are all free days!',
+  youHaveExistingVacation: 'You already have vacation during that time!',
+  noFreeColleagues: 'No free Colleagues',
+  notEnoughDays: "You don't have enough days",
 };
 
 const WEEK_DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];

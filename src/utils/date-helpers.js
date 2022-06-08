@@ -22,6 +22,11 @@ const getNumberOfWeeks = (month) => {
   const endDate = getEndOfMonth(month);
   const daysInMonth = getDaysInMonth(month);
 
+  /**
+   * [ '' '' ''  1  2  3  4] --> removed and + 1 at the end
+   * [  ....... ]            --> remaining days / days in week
+   * [ 26 27 28 29 30 '' ''] --> removed and + 1 at the end
+   */
   return (daysInMonth - (6 - startDate + 1) - (endDate + 1)) / DAYS_IN_WEEK + 2;
 };
 
@@ -51,14 +56,14 @@ const buildMonthMatrix = (month) => {
 };
 
 const getUserVacationDaysInMonth = (user, month) =>
-  user?.vacations?.filter(
+  (user?.vacations || []).filter(
     (vacation) =>
       dayjs(vacation.startDate).month() === month ||
       dayjs(vacation.endDate).month() === month
   );
 
 const isVacationDay = (day, month, vacationDays) =>
-  vacationDays?.find(
+  (vacationDays || []).find(
     (vacation) =>
       day !== 0 &&
       dayjs({ year: YEAR, month: month.month(), day: day }).isBetween(

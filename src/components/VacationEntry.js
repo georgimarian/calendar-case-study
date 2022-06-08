@@ -12,7 +12,6 @@ const VacationEntry = ({
   type,
   currentUser,
   setCurrentUser,
-  isRemovable = false,
 }) => {
   const [vacationDays, setVacationDays] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -41,7 +40,7 @@ const VacationEntry = ({
   );
 
   useEffect(() => {
-    if (endDate) {
+    if (type === 'personal') {
       setLoading(true);
       getWorkingDaysBetweenDates(startDate, endDate).then((data) => {
         setVacationDays(data);
@@ -60,25 +59,27 @@ const VacationEntry = ({
           })}
         </p>
         <p className='font-bold text-xl'>
-          {dateFormatter(startDate, 'de-DE', {
-            day: 'numeric',
-          })}
+          {dateFormatter(startDate, 'de-DE', { day: 'numeric' })}
         </p>
       </div>
       <div className={classNames(baseClasses, 'flex-1 items-start')}>
-        <p className='font-bold text-xl'>
-          {loading
-            ? `${LABELS.loading}`
-            : name || `Vacation (${vacationDays}) days`}
-        </p>
-        <p className='font-thin	'>
-          {!endDate
-            ? dateFormatter(startDate, 'default')
-            : `${dateFormatter(startDate, 'default')} -
-            ${dateFormatter(endDate, 'default')}`}
-        </p>
+        {loading ? (
+          `${LABELS.loading}`
+        ) : (
+          <>
+            <p className='font-bold text-xl'>
+              {name || `Vacation (${vacationDays}) days`}
+            </p>
+            <p className='font-thin	'>
+              {vacationDays <= 1
+                ? dateFormatter(startDate, 'default')
+                : `${dateFormatter(startDate, 'default')} -
+                    ${dateFormatter(endDate, 'default')}`}
+            </p>
+          </>
+        )}
       </div>
-      {isRemovable && (
+      {type === 'personal' && (
         <button
           className={classNames(baseClasses, 'items-center')}
           onClick={removeVacation}

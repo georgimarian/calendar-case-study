@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 import { dateFormatter, getUserVacationDaysInMonth } from 'utils';
 import VacationEntry from './VacationEntry';
 
@@ -9,15 +7,9 @@ const VacationDisplay = ({
   setCurrentUser,
   month,
 }) => {
-  const [currentVacationDays, setCurrentVacationDays] = useState([]);
-
-  useEffect(() => {
-    setCurrentVacationDays(getUserVacationDaysInMonth(currentUser, month));
-  }, [currentUser, month, setCurrentVacationDays]);
-
   return (
     <div className='py-4'>
-      {legalPublicHolidays.map((holiday) => (
+      {(legalPublicHolidays || []).map((holiday) => (
         <VacationEntry
           startDate={holiday.date}
           key={holiday.name}
@@ -26,7 +18,7 @@ const VacationDisplay = ({
           type='legal'
         />
       ))}
-      {currentVacationDays?.map((holiday) => (
+      {getUserVacationDaysInMonth(currentUser, month).map((holiday) => (
         <VacationEntry
           key={`${dateFormatter(holiday.startDate, 'default')} -
         ${dateFormatter(holiday.endDate, 'default')}`}
@@ -35,7 +27,6 @@ const VacationDisplay = ({
           currentUser={currentUser}
           setCurrentUser={setCurrentUser}
           type='personal'
-          isRemovable
         />
       ))}
     </div>
